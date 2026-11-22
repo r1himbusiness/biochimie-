@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="title">معرض الصور – مجموعات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;800&family=Inter:wght@400;500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f6;--card:#fff;--ink:#14213d;--mute:#5b6b82;--line:#d5dde8;--acc:#2b59ff;--acc-ink:#fff;--ok:#0e9f6e;--err:#c0392b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1522;--card:#17202f;--ink:#eaf0fa;--mute:#98a7bf;--line:#2a3649;--acc:#6f8cff;--acc-ink:#0e1522;--ok:#3ccf9a;--err:#ff7b6b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1522;--card:#17202f;--ink:#eaf0fa;--mute:#98a7bf;--line:#2a3649;--acc:#6f8cff;--acc-ink:#0e1522;--ok:#3ccf9a;--err:#ff7b6b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal","Inter",system-ui,sans-serif;line-height:1.6}
+html[dir="ltr"] body{font-family:"Inter","Tajawal",system-ui,sans-serif}
+header,main{max-width:1000px;margin:0 auto;padding:0 18px}
+header{padding-top:28px;padding-bottom:8px}
+.langs{display:flex;gap:8px;margin-bottom:10px}
+.langs button{background:transparent;border:1px solid var(--line);color:var(--mute);font-weight:500;padding:6px 14px;border-radius:99px}
+.langs button.active{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+h1{font-size:clamp(28px,6vw,44px);font-weight:800;margin:0 0 8px;letter-spacing:-.5px}
+header p{margin:0;color:var(--mute);max-width:56ch}
+.bar{display:flex;gap:10px;align-items:center;margin:20px 0 8px;font-size:15px;color:var(--mute);flex-wrap:wrap}
+.bar b{color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;padding:12px 0 56px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.stack{position:relative;aspect-ratio:4/3;background:var(--line);overflow:hidden}
+.stack img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:filter .5s}
+.locked img{filter:blur(16px) saturate(.75)}
+.s1{z-index:3} .s2{transform:translate(8px,8px);z-index:2;opacity:.85} .s3{transform:translate(16px,16px);z-index:1;opacity:.7}
+.lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5}
+.lock span{background:rgba(20,33,61,.78);color:#fff;border-radius:99px;padding:6px 14px;font-size:14px}
+.count{position:absolute;top:8px;inset-inline-start:8px;background:rgba(20,33,61,.78);color:#fff;font-size:12px;border-radius:99px;padding:3px 10px;z-index:6}
+.unlocked .lock{display:none}
+.meta{padding:12px 14px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.meta h2{font-size:17px;margin:0;font-weight:500}
+.meta .sub{font-size:13px;color:var(--mute);margin-top:2px}
+.price{font-weight:800;font-size:17px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;font-weight:800;background:var(--acc);color:var(--acc-ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+button:disabled{opacity:.6;cursor:wait}
+.owned{color:var(--ok);font-weight:800;font-size:15px}
+.modal{position:fixed;inset:0;background:rgba(10,16,28,.6);display:none;align-items:flex-end;justify-content:center;padding:0;z-index:20}
+.modal.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:460px;border-radius:18px 18px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow:auto}
+@media (min-width:560px){.modal{align-items:center}.sheet{border-radius:18px}}
+.sheet h3{margin:0 0 4px;font-size:21px}
+.sheet .sub{color:var(--mute);margin:0 0 14px;font-size:15px}
+.note{background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--mute);margin-bottom:14px}
+label{display:block;font-size:14px;margin:10px 0 4px;color:var(--mute)}
+input{width:100%;font:inherit;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input.ltr{direction:ltr;text-align:left}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:var(--err);font-size:14px;min-height:20px;margin:8px 0 0}
+.actions{display:flex;gap:10px;margin-top:12px}
+.actions .pay{flex:1}
+.viewgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.viewgrid img{width:100%;border-radius:10px;display:block;cursor:zoom-in}
+.full{position:fixed;inset:0;background:rgba(5,8,14,.92);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
+.full.open{display:flex}
+.full img{max-width:100%;max-height:100%;border-radius:8px}
+footer{max-width:1000px;margin:0 auto;padding:0 18px 40px;color:var(--mute);font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="langs" id="langs">
+    <button data-lang="ar">العربية</button>
+    <button data-lang="en">English</button>
+    <button data-lang="fr">Français</button>
+  </div>
+  <h1 data-i18n="h1">معرض الصور</h1>
+  <p data-i18n="intro">كل مجموعة تضم عدة صور. ادفع ثمن المجموعة مرة واحدة لتُفتح جميع صورها معاً.</p>
+  <div class="bar">
+    <span data-i18n="barUnlocked"><span data-i18n="barUnlockedLabel">مجموعات مفتوحة:</span> <b id="cnt">0</b> <span data-i18n="barOf">من</span> <b id="tot">0</b></span>
+    <span>·</span>
+    <span><span data-i18n="barTotal">إجمالي ما دفعته:</span> <b id="sum">0</b></span>
+  </div>
+</header>
+<main><div class="grid" id="grid"></div></main>
+<footer data-i18n="footerNote">هذا موقع تجريبي: الدفع وهمي ولا تُحفظ بيانات أي بطاقة ولا يُخصم أي مبلغ.</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="sheet" id="sheet"></div>
+</div>
+<div class="full" id="full"><img id="fullimg" alt=""></div>
+
+<script>
+/* ============ المحتوى: الصور والمجموعات — ضع صورك في مجلد images/ بنفس الأسماء ============ */
+var GROUPS=[
+ {id:"g1",file:"33651.png",count:4,
+  imgs:["33651.png","33656.png","33665.jpg","33669.jpg"],
+  t:{ar:"البنية الأولية",en:"Primary structure",fr:"Structure primaire"},
+  n:{ar:"تسلسل الأحماض الأمينية",en:"Amino-acid sequence",fr:"Séquence d'acides aminés"}},
+ {id:"g2",imgs:["33661.png","33666.jpg","33670.jpg"],
+  t:{ar:"البنية الثانوية: حلزون ألفا",en:"Secondary structure: alpha helix",fr:"Structure secondaire : hélice alpha"},
+  n:{ar:"رسوم الحلزون α",en:"Alpha-helix diagrams",fr:"Schémas de l'hélice α"}},
+ {id:"g3",imgs:["33662.png","33667.jpg","33671.jpg"],
+  t:{ar:"البنية الثانوية: صفيحة بيتا",en:"Secondary structure: beta sheet",fr:"Structure secondaire : feuillet bêta"},
+  n:{ar:"الصفيحة المطوية β",en:"Pleated β sheet",fr:"Feuillet plissé β"}},
+ {id:"g4",imgs:["33663.png","33672.jpg"],
+  t:{ar:"البنية الثالثية",en:"Tertiary structure",fr:"Structure tertiaire"},
+  n:{ar:"الطي ثلاثي الأبعاد",en:"3D folding",fr:"Repliement 3D"}},
+ {id:"g5",imgs:["33664.png","33668.jpg","33673.jpg"],
+  t:{ar:"البنية الرباعية",en:"Quaternary structure",fr:"Structure quaternaire"},
+  n:{ar:"الهيموغلوبين",en:"Hemoglobin",fr:"Hémoglobine"}},
+ {id:"g6",imgs:["33674.jpg","33675.jpg","33676.jpg","33677.jpg"],
+  t:{ar:"مخططات عامة",en:"Overview diagrams",fr:"Schémas généraux"},
+  n:{ar:"ملخص المستويات الأربعة",en:"Summary of the four levels",fr:"Résumé des quatre niveaux"}}
+];
+var IMG_DIR="images/"; // غيّر هذا إذا وضعت الصور في مجلد آخر
+function price(g){return g.imgs.length*50}
+function url(f){return IMG_DIR+f}
+
+/* ============ الترجمة ============ */
+var I18N={
+ ar:{dir:"rtl",currency:"دج",title:"معرض الصور – مجموعات",h1:"معرض الصور",
+  intro:"كل مجموعة تضم عدة صور. ادفع ثمن المجموعة مرة واحدة لتُفتح جميع صورها معاً.",
+  barUnlockedLabel:"مجموعات مفتوحة:",barOf:"من",barTotal:"إجمالي ما دفعته:",
+  photos:"صور",locked:"🔒 مقفلة",unlocked:"✓ مفتوحة",viewGroup:"عرض المجموعة",
+  payAndUnlock:"ادفع {p} وافتحها",close:"إغلاق",cancel:"إلغاء",pay:"ادفع {p}",
+  checkoutTitle:"إتمام الدفع",checkoutSub:"{t} ({n} صور) – المبلغ {p}",
+  note:"وضع تجريبي: لا يتم خصم أي مبلغ ولا تُحفظ بيانات البطاقة.",
+  nameLabel:"الاسم على البطاقة",cardLabel:"رقم البطاقة",expLabel:"الانتهاء",cvvLabel:"رمز الأمان",
+  verifying:"جارٍ التحقق…",
+  errName:"اكتب الاسم الموجود على البطاقة.",errCard:"رقم البطاقة يجب أن يكون 16 رقماً.",
+  errExp:"اكتب تاريخ الانتهاء بصيغة MM/YY.",errCvv:"رمز الأمان يتكون من 3 أرقام.",
+  declined:"تم رفض البطاقة. تحقق من البيانات أو جرّب بطاقة أخرى.",
+  footerNote:"هذا موقع تجريبي: الدفع وهمي ولا تُحفظ بيانات أي بطاقة ولا يُخصم أي مبلغ."},
+ en:{dir:"ltr",currency:"DZD",title:"Photo gallery – bundles",h1:"Photo gallery",
+  intro:"Each bundle holds several photos. Pay once for the bundle to unlock every photo in it at once.",
+  barUnlockedLabel:"Bundles unlocked:",barOf:"of",barTotal:"Total paid:",
+  photos:"photos",locked:"🔒 Locked",unlocked:"✓ Unlocked",viewGroup:"View bundle",
+  payAndUnlock:"Pay {p} to unlock",close:"Close",cancel:"Cancel",pay:"Pay {p}",
+  checkoutTitle:"Checkout",checkoutSub:"{t} ({n} photos) – amount {p}",
+  note:"Demo mode: nothing is charged and no card data is stored.",
+  nameLabel:"Name on card",cardLabel:"Card number",expLabel:"Expiry",cvvLabel:"CVV",
+  verifying:"Verifying…",
+  errName:"Enter the name on the card.",errCard:"Card number must be 16 digits.",
+  errExp:"Enter the expiry date as MM/YY.",errCvv:"CVV must be 3 digits.",
+  declined:"Card declined. Check the details or try another card.",
+  footerNote:"This is a demo site: payment is fake, no card data is stored and nothing is ever charged."},
+ fr:{dir:"ltr",currency:"DZD",title:"Galerie photo – lots",h1:"Galerie photo",
+  intro:"Chaque lot regroupe plusieurs photos. Payez le lot une seule fois pour débloquer toutes ses photos d'un coup.",
+  barUnlockedLabel:"Lots débloqués :",barOf:"sur",barTotal:"Total payé :",
+  photos:"photos",locked:"🔒 Verrouillé",unlocked:"✓ Débloqué",viewGroup:"Voir le lot",
+  payAndUnlock:"Payer {p} pour débloquer",close:"Fermer",cancel:"Annuler",pay:"Payer {p}",
+  checkoutTitle:"Paiement",checkoutSub:"{t} ({n} photos) – montant {p}",
+  note:"Mode démo : aucun montant n'est débité et aucune donnée de carte n'est conservée.",
+  nameLabel:"Nom sur la carte",cardLabel:"Numéro de carte",expLabel:"Expiration",cvvLabel:"CVV",
+  verifying:"Vérification…",
+  errName:"Indiquez le nom figurant sur la carte.",errCard:"Le numéro de carte doit contenir 16 chiffres.",
+  errExp:"Indiquez la date d'expiration au format MM/AA.",errCvv:"Le CVV doit contenir 3 chiffres.",
+  declined:"Carte refusée. Vérifiez les informations ou essayez une autre carte.",
+  footerNote:"Site de démonstration : le paiement est fictif, aucune donnée de carte n'est conservée et rien n'est jamais débité."}
+};
+var LANG=localStorage.getItem("photoshop.lang")||"ar";
+function t(key,vars){
+ var s=I18N[LANG][key]||key;
+ if(vars)for(var k in vars)s=s.split("{"+k+"}").join(vars[k]);
+ return s;
+}
+function fmtPrice(p){return p+" "+I18N[LANG].currency}
+
+function applyLang(){
+ document.getElementById("html").lang=LANG;
+ document.getElementById("html").dir=I18N[LANG].dir;
+ document.title=t("title");
+ document.querySelectorAll("[data-i18n]").forEach(function(el){
+  var k=el.getAttribute("data-i18n");
+  if(I18N[LANG][k]!==undefined && !el.children.length) el.textContent=t(k);
+ });
+ document.getElementById("barUnlockedLabel").textContent=t("barUnlockedLabel");
+ document.getElementById("barOf").textContent=t("barOf");
+ document.getElementById("barTotal").textContent=t("barTotal");
+ document.querySelectorAll("#langs button").forEach(function(b){
+  b.classList.toggle("active",b.getAttribute("data-lang")===LANG);
+ });
+ render();
+}
+document.getElementById("langs").addEventListener("click",function(e){
+ var b=e.target.closest("button[data-lang]");if(!b)return;
+ LANG=b.getAttribute("data-lang");localStorage.setItem("photoshop.lang",LANG);applyLang();
+});
+
+var KEY="photoshop.owned.groups";
+var owned={};
+try{owned=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){owned={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(owned))}catch(e){}}
+
+var grid=document.getElementById("grid");
+function render(){
+ grid.innerHTML="";var n=0,sum=0;
+ GROUPS.forEach(function(g){
+  var own=!!owned[g.id];if(own){n++;sum+=price(g)}
+  var thumbs=g.imgs.slice(0,3);
+  var d=document.createElement("div");d.className="card";
+  var stackHtml='<div class="count">'+g.imgs.length+' '+t("photos")+'</div>';
+  thumbs.slice().reverse().forEach(function(f,i){
+   var cls = i===thumbs.length-1?"s1":(i===thumbs.length-2?"s2":"s3");
+   stackHtml+='<img class="'+cls+'" alt="" src="'+url(f)+'">';
+  });
+  stackHtml+='<div class="lock"><span>'+t("locked")+'</span></div>';
+  d.innerHTML='<div class="stack '+(own?"unlocked":"locked")+'">'+stackHtml+'</div>'+
+   '<div class="meta"><div><h2>'+g.t[LANG]+'</h2><div class="sub">'+g.n[LANG]+'</div>'+(own?'<span class="owned">'+t("unlocked")+'</span>':'<span class="price">'+fmtPrice(price(g))+'</span>')+'</div></div>';
+  var b=document.createElement("button");
+  b.textContent=own?t("viewGroup"):t("payAndUnlock",{p:fmtPrice(price(g))});
+  if(own)b.className="ghost";
+  b.onclick=function(){own?viewer(g):checkout(g)};
+  d.querySelector(".meta").appendChild(b);
+  grid.appendChild(d);
+ });
+ document.getElementById("cnt").textContent=n;
+ document.getElementById("tot").textContent=GROUPS.length;
+ document.getElementById("sum").textContent=fmtPrice(sum);
+}
+
+var modal=document.getElementById("modal"),sheet=document.getElementById("sheet");
+var full=document.getElementById("full"),fullimg=document.getElementById("fullimg");
+function open(){modal.classList.add("open")}
+function close(){modal.classList.remove("open")}
+modal.addEventListener("click",function(e){if(e.target===modal)close()});
+full.addEventListener("click",function(){full.classList.remove("open")});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){close();full.classList.remove("open")}});
+
+function viewer(g){
+ sheet.className="sheet";
+ var html='<h3 id="mt">'+g.t[LANG]+'</h3><p class="sub">'+g.n[LANG]+' – '+g.imgs.length+' '+t("photos")+'</p><div class="viewgrid">';
+ g.imgs.forEach(function(f){html+='<img alt="" src="'+url(f)+'">'});
+ html+='</div><div class="actions"><button class="ghost" id="x">'+t("close")+'</button></div>';
+ sheet.innerHTML=html;
+ document.getElementById("x").onclick=close;
+ sheet.querySelectorAll(".viewgrid img").forEach(function(im){
+  im.onclick=function(){fullimg.src=im.src;full.classList.add("open")};
+ });
+ open();
+}
+
+function checkout(g){
+ var p=fmtPrice(price(g));
+ sheet.className="sheet";
+ sheet.innerHTML='<h3 id="mt">'+t("checkoutTitle")+'</h3><p class="sub">'+t("checkoutSub",{t:g.t[LANG],n:g.imgs.length,p:p})+'</p>'+
+ '<div class="note">'+t("note")+'</div>'+
+ '<label for="nm">'+t("nameLabel")+'</label><input id="nm" autocomplete="cc-name">'+
+ '<label for="cn">'+t("cardLabel")+'</label><input id="cn" class="ltr" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000" maxlength="19">'+
+ '<div class="row"><div><label for="ex">'+t("expLabel")+'</label><input id="ex" class="ltr" inputmode="numeric" placeholder="MM/YY" maxlength="5"></div>'+
+ '<div><label for="cv">'+t("cvvLabel")+'</label><input id="cv" class="ltr" inputmode="numeric" placeholder="123" maxlength="3"></div></div>'+
+ '<p class="err" id="er" role="alert"></p>'+
+ '<div class="actions"><button class="ghost" id="cl">'+t("cancel")+'</button><button class="pay" id="pay">'+t("pay",{p:p})+'</button></div>';
+ var cn=document.getElementById("cn"),ex=document.getElementById("ex"),er=document.getElementById("er"),pay=document.getElementById("pay");
+ cn.oninput=function(){var v=cn.value.replace(/\D/g,"").slice(0,16);cn.value=v.replace(/(.{4})/g,"$1 ").trim()};
+ ex.oninput=function(){var v=ex.value.replace(/\D/g,"").slice(0,4);ex.value=v.length>2?v.slice(0,2)+"/"+v.slice(2):v};
+ document.getElementById("cl").onclick=close;
+ pay.onclick=function(){
+  var name=document.getElementById("nm").value.trim(),num=cn.value.replace(/\s/g,""),e=ex.value,cv=document.getElementById("cv").value;
+  var m=/^(\d\d)\/(\d\d)$/.exec(e);
+  if(!name){er.textContent=t("errName");return}
+  if(num.length!==16){er.textContent=t("errCard");return}
+  if(!m||+m[1]<1||+m[1]>12){er.textContent=t("errExp");return}
+  if(cv.length!==3){er.textContent=t("errCvv");return}
+  er.textContent="";pay.disabled=true;pay.textContent=t("verifying");
+  setTimeout(function(){
+   pay.disabled=false;pay.textContent=t("pay",{p:p});
+   er.textContent=t("declined");
+  },1200);
+ };
+ open();document.getElementById("nm").focus();
+}
+applyLang();
+</script>
+</body>
+</html>
